@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { cart, logoDark, profile } from "../../assets";
-import { FiMenu } from "react-icons/fi";
+import { cart, logoDark } from "../../assets";
+import { FiMenu, FiUser } from "react-icons/fi";
 import { MdClose } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ const listStyles =
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const { productData } = useSelector((state) => state.bazar);
+  const { productData, userInfo } = useSelector((state) => state.bazar);
 
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
@@ -49,19 +49,31 @@ const Header = () => {
             <div className={`${listStyles}`}>
               <span className="capitalize">Block</span>
             </div>
-            <Link to="/cart">
-              <div className="relative flex gap-8">
+            <div className="relative flex gap-8">
+              <Link to="/cart">
                 <img src={cart} alt="cart" className="w-6" />
                 <span className="absolute w-6 top-2 left-0 text-sm flex items-center justify-center font-semibold font-titleFont">
                   {productData.length}
                 </span>
-                <img
-                  src={profile}
-                  alt="profile"
-                  className="w-[28.95px] h-[28.95px] object-cover rounded-full"
-                />
-              </div>
-            </Link>
+              </Link>
+              <Link to={"/login"} className="flex items-center gap-4">
+                {userInfo ? (
+                  <>
+                    <img
+                      src={userInfo.image}
+                      alt="profile"
+                      className="w-[28.95px] h-[28.95px] object-cover rounded-full"
+                    />
+                    <p>{userInfo.name.split(" ")[0]}</p>
+                  </>
+                ) : (
+                  <FiUser
+                    size={30}
+                    className="bg-gray-300 text-black p-1 rounded-full"
+                  />
+                )}
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="relative flex gap-4">
@@ -83,14 +95,25 @@ const Header = () => {
                 <div className="py-2">Shop</div>
                 <div className="py-2">Element</div>
                 <div className="py-2">Block</div>
-                <div className="flex gap-3 items-center justify-center bg-blue-300 p-2 rounded-md cursor-pointer hover:bg-blue-400 transition duration-300">
-                  <img
-                    src={profile}
-                    alt="profile"
-                    className="w-[28.95px] h-[28.95px] object-cover rounded-full"
-                  />
-                  <span>Profile</span>
-                </div>
+                <Link to={"/login"}>
+                  <div className="flex gap-3 items-center justify-center bg-black p-2 rounded-md cursor-pointer hover:bg-black/80 transition duration-300 text-white">
+                    {userInfo.image ? (
+                      <>
+                        <img
+                          src={userInfo.image}
+                          alt="profile"
+                          className="w-[28.95px] h-[28.95px] object-cover rounded-full"
+                        />
+                        <span>{userInfo.name.split(" ")[0]}</span>
+                      </>
+                    ) : (
+                      <FiUser
+                        size={30}
+                        className="bg-gray-300 text-black p-1 rounded-full"
+                      />
+                    )}
+                  </div>
+                </Link>
               </div>
             )}
           </div>

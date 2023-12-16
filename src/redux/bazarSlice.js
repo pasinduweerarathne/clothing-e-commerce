@@ -45,6 +45,12 @@ export const bazarSlice = createSlice({
     resetCart: (state) => {
       state.productData = [];
     },
+    addUser: (state, action) => {
+      state.userInfo = action.payload;
+    },
+    removeUser: (state) => {
+      state.userInfo = null;
+    },
   },
 });
 
@@ -54,5 +60,7 @@ export const {
   decrementQty,
   resetCart,
   removeItemFromCart,
+  addUser,
+  removeUser,
 } = bazarSlice.actions;
 export default bazarSlice.reducer;
