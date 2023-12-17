@@ -3,10 +3,14 @@ import CartItem from "./CartItem";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineArrowLeft } from "react-icons/hi";
+import { toast } from "react-toastify";
+import StripeCheckout from "react-stripe-checkout";
+import axios from "axios";
 
 const Cart = () => {
-  const { productData } = useSelector((state) => state.bazar);
+  const { productData, userInfo } = useSelector((state) => state.bazar);
   const [totalAmt, setTotalAmt] = useState("");
+  const [payNow, setPayNow] = useState(false);
 
   useEffect(() => {
     let price = 0;
@@ -17,7 +21,20 @@ const Cart = () => {
     setTotalAmt(price.toFixed(2));
   }, [productData]);
 
-  console.log(productData.length === 0);
+  const handleCehckout = () => {
+    if (userInfo) {
+      setPayNow(true);
+    } else {
+      toast.error("Please sign in to checkout");
+    }
+  };
+
+  const payment = async (token) => {
+    await axios.post("http://localhost:8000/pay", {
+      amount: totalAmt * 100,
+      token,
+    });
+  };
 
   return (
     <div>
@@ -65,11 +82,24 @@ const Cart = () => {
             </p>
             <button
               disabled={productData.length === 0}
-              // onClick={}
+              onClick={handleCehckout}
               className="text-base bg-black text-white w-full py-3 mt-6 hover:bg-gray-800 duration-300 disabled:cursor-not-allowed disabled:bg-black/70"
             >
               proceed to checkout
             </button>
+            {payNow && (
+              <div className="w-full mt-6 flex items-center justify-center">
+                <StripeCheckout
+                  stripeKey="pk_test_51NXo99IayXhoaNEBQDACOcnpPu0P8KtJftA6BC97KFHegd2Oqw6lCgPUP3w26zgBN8ayuFGWluecuV6aQcdzEEMS00QuyYYYGx"
+                  name="Bazar Online Shopping"
+                  amount={totalAmt * 100}
+                  label="Pay to bazar"
+                  description={`Your payment amount is ${totalAmt}`}
+                  token={payment}
+                  email={userInfo.email}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

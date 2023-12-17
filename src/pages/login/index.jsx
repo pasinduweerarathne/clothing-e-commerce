@@ -7,7 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
-import { addUser } from "../../redux/bazarSlice";
+import { addUser, removeUser } from "../../redux/bazarSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -43,6 +43,7 @@ const Login = () => {
     signOut(auth)
       .then(() => {
         toast.success("Log out successfully!");
+        dispatch(removeUser());
       })
       .catch((error) => {
         console.log(error);
